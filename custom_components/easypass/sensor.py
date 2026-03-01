@@ -43,8 +43,6 @@ async def async_setup_platform(
     """Set up the EasyPass Sensor platform."""
     # _LOGGER.info(pformat(config))
 
-    username = config[CONF_USERNAME]
-    password = config[CONF_PASSWORD]
     sensor = {
         "name": config[CONF_NAME],
         "offset": config[CONF_OFFSET],
