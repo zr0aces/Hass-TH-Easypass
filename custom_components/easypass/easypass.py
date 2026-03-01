@@ -1,6 +1,10 @@
+import logging
+
 import requests
 
 from .api import LoginEasyPass
+
+_LOGGER = logging.getLogger("easypass")
 
 
 class EasyPassInstance:

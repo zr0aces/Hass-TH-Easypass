@@ -70,23 +70,25 @@ class LoginEasyPass:
     def get_easypass(session, login):
         results = []
         response = LoginEasyPass.get_response(session, EASYPASS_URL, login)
+        if not response:
+            _LOGGER.warning("Failed to retrieve response from %s", EASYPASS_URL)
+            return "Login Failed"
         try:
-            if response:
-                soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
-                table = soup.find("table")
-                headers = [
-                    header.text.strip()
-                    for header in table.find("tr", class_="head-table").find_all("td")
-                ]
-                for row in table.find_all("tr"):
-                    if "head-table" in row.get("class", []):
-                        continue
-                    row_dict = {
-                        headers[i]: cell.text.strip()
-                        for i, cell in enumerate(row.find_all("td"))
-                    }
-                    results.append(row_dict)
-                _LOGGER.info(results)
+            soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+            table = soup.find("table")
+            headers = [
+                header.text.strip()
+                for header in table.find("tr", class_="head-table").find_all("td")
+            ]
+            for row in table.find_all("tr"):
+                if "head-table" in row.get("class", []):
+                    continue
+                row_dict = {
+                    headers[i]: cell.text.strip()
+                    for i, cell in enumerate(row.find_all("td"))
+                }
+                results.append(row_dict)
+            _LOGGER.info(results)
             return results
         except Exception as err:
             _LOGGER.error("Failed to parse Easy Pass data: %s", err)
