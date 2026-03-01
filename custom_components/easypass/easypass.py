@@ -1,9 +1,10 @@
 import logging
-import random
 
 import requests
 
 from .api import LoginEasyPass
+
+_LOGGER = logging.getLogger("easypass")
 
 
 class EasyPassInstance:
@@ -17,12 +18,11 @@ class EasyPassInstance:
         self._offset = int(self._offset) - 1
         with requests.session() as session:
             LoginEasyPass.login_easypass(session, self._sensor)
-            cards = LoginEasyPass.get_easypass(session)
+            cards = LoginEasyPass.get_easypass(session, self._sensor)
             if cards == "Login Failed":
                 return cards, ""
             else:
                 try:
-                    attr = []
                     attr = {
                         "ทะเบียนรถ": cards[self._offset]["ทะเบียนรถ"],
                         "เลขสมาร์ทการ์ด": cards[self._offset]["เลขสมาร์ทการ์ด (S/N)"],
@@ -30,10 +30,13 @@ class EasyPassInstance:
                     balance_value = cards[self._offset]["จำนวนเงิน"]
                     balance_value = balance_value.replace(",", "")
                     return balance_value, attr
-                except:
+                except (IndexError, KeyError) as err:
+                    _LOGGER.warning(
+                        "Offset %s out of range, falling back to first card: %s",
+                        self._sensor["offset"],
+                        err,
+                    )
                     length = len(cards)
-                    attr = []
-                    # attr = { "offset": self._sensor["offset"], "ควรตั้งoffsetเป็น": length}
                     balance_value = cards[0]["จำนวนเงิน"]
                     balance_value = balance_value.replace(",", "")
                     attr = {
@@ -41,4 +44,4 @@ class EasyPassInstance:
                         "balance": balance_value,
                         "smartcard": cards[0]["เลขสมาร์ทการ์ด (S/N)"],
                     }
-                    return cards, attr
+                    return balance_value, attr
