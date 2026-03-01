@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
-from pprint import pformat
 
 # Import the device class from the component that you want to support
 import homeassistant.helpers.config_validation as cv
@@ -41,8 +40,6 @@ async def async_setup_platform(
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
     """Set up the EasyPass Sensor platform."""
-    # _LOGGER.info(pformat(config))
-
     sensor = {
         "name": config[CONF_NAME],
         "offset": config[CONF_OFFSET],
@@ -58,8 +55,6 @@ class EasyPassSensor(SensorEntity):
 
     def __init__(self, sensor) -> None:
         """Initialize an EasyPass Login."""
-        _LOGGER.info(pformat(sensor))
-
         self._name = sensor["name"]
         self._value = EasyPassInstance(sensor)
         self._attr_unique_id = sensor["name"]
@@ -86,7 +81,6 @@ class EasyPassSensor(SensorEntity):
         return "THB"
 
     def update(self) -> None:
-        # _LOGGER.info(self._value.value)
         _state, _attr = self._value.value
         self._attr_native_value = _state
         self.extra_state_attributes = _attr
