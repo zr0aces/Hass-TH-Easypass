@@ -3,7 +3,8 @@
     "name": "Thai Easy Pass Balance",
     "codeowners": [
         "@Foreversaiz",
-        "@srakrn"
+        "@srakrn",
+        "@zr0aces"
     ],
     "dependencies": [],
     "documentation": "https://github.com/zr0aces/Hass-TH-Easypass/blob/main/README.md",
