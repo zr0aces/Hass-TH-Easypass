@@ -3,11 +3,12 @@
     "name": "Thai Easy Pass Balance",
     "codeowners": [
         "@Foreversaiz",
-        "@srakrn"
+        "@srakrn",
+        "@zr0aces"
     ],
     "dependencies": [],
     "documentation": "https://github.com/zr0aces/Hass-TH-Easypass/blob/main/README.md",
     "iot_class": "cloud_polling",
     "requirements": [],
-    "version": "0.1.4"
+    "version": "0.2.0"
 }
