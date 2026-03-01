@@ -36,7 +36,6 @@ class EasyPassInstance:
                         self._sensor["offset"],
                         err,
                     )
-                    length = len(cards)
                     balance_value = cards[0]["จำนวนเงิน"]
                     balance_value = balance_value.replace(",", "")
                     attr = {

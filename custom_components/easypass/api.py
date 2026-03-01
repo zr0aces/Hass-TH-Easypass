@@ -23,6 +23,7 @@ EASYPASS_RETRY_WAIT_SEC = 300
 
 
 class LoginEasyPass:
+    @staticmethod
     def login_easypass(session, login):
         session.get(EASYPASS_LOGIN_URL)
         headers = {
@@ -32,6 +33,7 @@ class LoginEasyPass:
         payload = f"email={login['username']}&password={login['password']}"
         session.post(EASYPASS_SIGNIN_URL, data=payload, headers=headers)
 
+    @staticmethod
     def get_response(session, url, login, min_cont_size=MIN_CONTENT_SIZE):
         global REFRESH_SEC
         result = None
@@ -67,6 +69,7 @@ class LoginEasyPass:
             time.sleep(EASYPASS_RETRY_WAIT_SEC)
         return result
 
+    @staticmethod
     def get_easypass(session, login):
         results = []
         response = LoginEasyPass.get_response(session, EASYPASS_URL, login)

@@ -1,49 +1,103 @@
-# Custom Home Assistant Component for Thailand's Easy Pass Tollway
+# Hass-TH-Easypass
 
-![หน้าจอ Home Assistant แสดงยอด Easy Pass](show.png)
+> Home Assistant custom component that shows your **Thai Easy Pass** toll-card balance as a sensor.
 
-Integration/Custom Component สำหรับ Home Assistant เพื่อดึงยอดจาก Easy Pass
-
+![Home Assistant dashboard showing Easy Pass balance](show.png)
 
 <p><a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=zr0aces&amp;repository=Hass-TH-Easypass&amp;category=integration" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open your Home Assistant instance and open a repository inside the Home Assistant Community Store."></a></p>
 
-## วิธีการใช้งาน
+---
 
-เพิ่ม configuration ที่ `configuration.yaml`
+## Installation
+
+### Via HACS (recommended)
+
+1. Open HACS in Home Assistant.
+2. Click **Custom repositories** and add `zr0aces/Hass-TH-Easypass` with category **Integration**.
+3. Search for **Thai Easy Pass Balance** and install it.
+4. Restart Home Assistant.
+
+### Manual
+
+1. Copy the `custom_components/easypass` folder into your Home Assistant `config/custom_components/` directory.
+2. Restart Home Assistant.
+
+---
+
+## Configuration
+
+Add the following to your `configuration.yaml`:
+
 ```yaml
 sensor:
   - platform: easypass
     name: "easypass_balance"
-    offset: "1"
     username: "user@gmail.com"
     password: "password"
-    scan_interval: 300
+    offset: "1"
+    scan_interval: 300   # seconds between updates (optional, default 30 s)
 ```
 
-`offset` คืออันดับของบัตรที่ดึงมาแสดงจากชื่อผู้ใช้-รหัสผ่านที่ให้ หากมีบัตรใบเดียวให้ใส่เป็น `"1"` เสมอ
+| Option | Required | Description |
+|--------|----------|-------------|
+| `name` | ✅ | Unique name for the sensor entity |
+| `username` | ✅ | Email address used to log in at thaieasypass.com |
+| `password` | ✅ | Password for the account |
+| `offset` | ✅ | Which card to display — `"1"` for the first card, `"2"` for the second, etc. |
+| `scan_interval` | ❌ | How often (in seconds) to refresh the balance (recommended: `300`) |
 
-หรือการตั้งค่ากรณีมีหลายใบ ซึ่งจะทำให้ได้ entity แยกกันสำหรับบัตรทั้งสองใบ
+### Multiple cards
+
+If you have more than one Easy Pass card linked to the same account, create one sensor per card using a different `offset`:
 
 ```yaml
 sensor:
   - platform: easypass
     name: "easypass_balance_1"
-    offset: "1"
     username: "user@gmail.com"
     password: "password"
+    offset: "1"
     scan_interval: 300
   - platform: easypass
     name: "easypass_balance_2"
-    offset: "2"
     username: "user@gmail.com"
     password: "password"
+    offset: "2"
     scan_interval: 300
 ```
 
-## การแก้ไขปัญหา (Troubleshooting)
+---
 
-หากพบปัญหา entity แสดงค่า `unavailable` หรือ `Login Failed` ให้ตรวจสอบดังนี้:
+## Troubleshooting
 
-1. ตรวจสอบ username และ password ว่าถูกต้องโดยลองล็อกอินที่ [thaieasypass.com](https://www.thaieasypass.com) โดยตรง
-2. ตรวจสอบ log ของ Home Assistant ใน **Settings → System → Logs** เพื่อดูข้อความ error ที่เกี่ยวกับ `easypass`
-3. หาก offset ไม่ถูกต้อง ระบบจะพยายามดึงข้อมูลจากบัตรใบแรกแทนโดยอัตโนมัติ
+| Symptom | What to check |
+|---------|---------------|
+| Sensor shows `unavailable` or `Login Failed` | Verify credentials by logging in at [thaieasypass.com](https://www.thaieasypass.com) directly |
+| Wrong card balance shown | Confirm the `offset` value matches the card position shown on the website |
+| Sensor updates too slowly | Lower `scan_interval` (minimum ~120 s to avoid being blocked) |
+
+For detailed error messages go to **Settings → System → Logs** and search for `easypass`.
+
+---
+
+## วิธีการใช้งาน (ภาษาไทย)
+
+เพิ่มการตั้งค่าด้านล่างในไฟล์ `configuration.yaml`:
+
+```yaml
+sensor:
+  - platform: easypass
+    name: "easypass_balance"
+    username: "user@gmail.com"
+    password: "password"
+    offset: "1"
+    scan_interval: 300
+```
+
+`offset` คืออันดับของบัตรที่ต้องการแสดง (`"1"` = บัตรใบแรก, `"2"` = บัตรใบที่สอง และต่อไป)
+
+หากมีหลายใบให้สร้าง sensor แยกสำหรับแต่ละบัตร โดยเปลี่ยน `name` และ `offset` ให้ต่างกัน
+
+หากพบปัญหา entity แสดงค่า `unavailable` หรือ `Login Failed`:
+1. ตรวจสอบ username/password โดยลองล็อกอินที่ [thaieasypass.com](https://www.thaieasypass.com) โดยตรง
+2. ดู log ได้ที่ **Settings → System → Logs** แล้วค้นหาคำว่า `easypass`
